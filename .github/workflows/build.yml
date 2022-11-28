@@ -1,0 +1,123 @@
+name: Test and Deploy bioimageio.core
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  black:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check files using the black formatter
+        uses: rickstaa/action-black@v1
+        id: action_black
+        with:
+          black_args: "."
+      - name: Annotate diff changes using reviewdog
+        if: steps.action_black.outputs.is_formatted == 'true'
+        uses: reviewdog/action-suggester@v1
+        with:
+          tool_name: blackfmt
+
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install mypy
+    - name: MyPy
+      run: |
+        mkdir -p .mypy-cache
+        mypy . --install-types --non-interactive --cache-dir .mypy-cache --explicit-package-bases --check-untyped-defs
+
+  test-with-bioimage-core-conda:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
+    steps:
+    - uses: actions/checkout@v2
+    - name: install dependencies
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        mamba-version: "*"
+        channel-priority: strict
+        activate-environment: default
+        environment-file: dev/env_default.yaml
+        python-version: ${{ matrix.python-version }}
+    - name: additional setup
+      shell: bash -l {0}
+      run: pip install --no-deps -e .
+    - name: pytest-with-bioimage-core-conda
+      shell: bash -l {0}
+      run: pytest --disable-pytest-warnings
+
+  test-with-bioimage-core-main:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8, 3.9]
+    steps:
+    - uses: actions/checkout@v2
+    - name: install dependencies
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        mamba-version: "*"
+        channel-priority: strict
+        activate-environment: default
+        environment-file: dev/env_default.yaml
+        python-version: ${{ matrix.python-version }}
+    - name: additional setup
+      shell: bash -l {0}
+      run: |
+        conda remove --force bioimageio.core
+        pip install --no-deps git+https://github.com/bioimage-io/core-bioimage-io-python
+        pip install --no-deps -e .
+    - name: pytest-with-bioimage-core-main
+      shell: bash -l {0}
+      run: pytest --disable-pytest-warnings
+
+  test-env-stardist:
+    needs: test-with-bioimage-core-conda
+    uses: bioimage-io/workflows-bioimage-io-python/.github/workflows/test-env.yaml@main
+    with:
+      env_name: stardist
+      python_version: 3.7
+
+  test-env-stardist-tf1:
+    needs: test-with-bioimage-core-conda
+    uses: bioimage-io/workflows-bioimage-io-python/.github/workflows/test-env.yaml@main
+    with:
+      env_name: stardist_tf1
+      submodule_name: stardist
+      python_version: 3.7
+
+  conda-build:
+    runs-on: ubuntu-latest
+    needs: test-with-bioimage-core-conda
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: setup conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        auto-activate-base: true
+        activate-environment: ""
+    - name: linux conda build
+      shell: bash -l {0}
+      run: |
+        conda install -n base -c conda-forge conda-build pip -y
+        conda build -c conda-forge conda-recipe

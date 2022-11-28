@@ -1,0 +1,40 @@
+authors:
+- {github_user: fynnbe, name: Fynn Beuttenmüller}
+cite:
+- {doi: 10.1101/2022.06.07.495102, text: BioImage.IO}
+- {doi: 10.1007/978-3-030-00934-2_30, text: 'Stardist: Cell Detection with Star-Convex
+    Polygons'}
+- {doi: 10.1109/WACV45572.2020.9093435, text: 'Stardist: Star-convex Polyhedra for
+    3D Object Detection and Segmentation in Microscopy'}
+description: 'A workflow to apply a stardist model and the stardist postprocessing.
+
+  This workflow is loosely based on https://nbviewer.org/github/stardist/stardist/blob/master/examples/2D/3_prediction.ipynb'
+format_version: 0.2.3
+inputs:
+- {description: the (source/raw) model RDF that describes the stardist model to be
+    used for inference, name: model_rdf, type: string}
+- axes:
+  - {type: batch}
+  - {type: channel}
+  - {name: y, type: space}
+  - {name: x, type: space}
+  description: raw input
+  name: input_tensor
+  type: tensor
+name: run stardist model inference
+options:
+- {default: null, description: Tile shapes for model inputs. Defaults to no tiling.,
+  name: tiles, type: list}
+outputs:
+- axes:
+  - {type: batch}
+  - {type: channel}
+  - {name: y, type: space}
+  - {name: x, type: space}
+  description: Labels of detected objects
+  name: labels
+  type: tensor
+- {description: Dictionary describing the labeled object's polygons, name: polys,
+  type: dict}
+type: workflow
+version: 0.1.0

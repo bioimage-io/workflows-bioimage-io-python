@@ -1,0 +1,15 @@
+name: minimal
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - bioimageio.core
+  - black
+  - conda-build
+  - dask
+  - mypy
+  - pip
+  - pytest
+  - xarray
+  - pip:
+    - imjoy-rpc

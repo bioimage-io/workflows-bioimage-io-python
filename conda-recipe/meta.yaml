@@ -1,0 +1,62 @@
+{% set setup_py_data = load_setup_py_data() %}
+
+package:
+  name: bioimageio.workflows
+  version: {{ setup_py_data['version'] }}
+
+source:
+  path: ..
+
+build:
+  noarch: python
+  number: 0
+  entry_points:
+    {% for ep in setup_py_data['entry_points']['console_scripts'] %}
+    - {{ ep }}
+    {% endfor %}
+  script: "{{ PYTHON }} -m pip install --no-deps --ignore-installed ."
+
+requirements:
+  host:
+    - python >=3.7,<3.10
+    - pip
+  run:
+    - python >=3.7,<3.10
+    {% for dep in setup_py_data['install_requires'] %}
+    - {{ dep.lower() }}
+    {% endfor %}
+  run_constrained:
+    - pytorch-cuda>=11.6
+    {% for dep in setup_py_data['extras_require']['pytorch'] %}
+      {% if dep.startswith('torch>=') %}  # pip: torch  -> conda: pytorch
+    - py{{ dep.lower() }}
+      {% else %}
+    - {{ dep.lower() }}
+      {% endif %}
+    {% endfor %}
+    {% for dep in setup_py_data['extras_require']['onnx'] %}
+    - {{ dep.lower() }}
+    {% endfor %}
+
+test:
+  imports:
+    - bioimageio.workflows
+    - bioimageio.workflows.build_spec
+  source_files:
+    - tests
+  requires:
+    {% for dep in setup_py_data['extras_require']['test'] %}
+    - {{ dep.lower() }}
+    {% endfor %}
+  commands:
+    - pytest
+
+
+about:
+  home: https://github.com/bioimage-io/workflows-bioimage-io-python
+  license: MIT
+  license_family: MIT
+  license_file: LICENSE
+  summary: "Workflows extending the functionality of the BioImage.IO Core Library."
+  doc_url: https://github.com/bioimage-io/workflows-bioimage-io-python
+  dev_url: https://github.com/bioimage-io/workflows-bioimage-io-python

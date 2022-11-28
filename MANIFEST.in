@@ -1,0 +1,4 @@
+include bioimageio/workflows/VERSION
+include README.md
+include LICENSE
+include bioimageio/workflows/static/workflow_rdfs/*

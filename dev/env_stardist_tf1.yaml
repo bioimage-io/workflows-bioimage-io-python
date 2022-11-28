@@ -1,0 +1,18 @@
+name: stardist_tf1
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - bioimageio.core
+  - black
+  - conda-build
+  - dask
+  - mypy
+  - pip
+  - pytest
+  - python==3.7.*
+  - tensorflow==1.*
+  - xarray
+  - pip:
+    - imjoy-rpc
+    - stardist[tf1]

@@ -1,0 +1,1 @@
+from ._inference import run_stardist_inference_2d
