@@ -15,12 +15,12 @@ from bioimageio.spec.model import raw_nodes
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 
 
-async def run_stardist_inference_2d(
+async def stardist_prediction_2d(
     model_rdf: Union[str, PathLike, dict, IO, bytes, raw_nodes.URI, RawResourceDescription],
     input_tensor: xr.DataArray,
     tiles: Optional[Sequence[Dict[str, int]]] = None,
 ) -> Tuple[xr.DataArray, dict]:
-    """run stardist model inference
+    """stardist prediction 2d
 
     A workflow to apply a stardist model and the stardist postprocessing.
     This workflow is loosely based on https://nbviewer.org/github/stardist/stardist/blob/master/examples/2D/3_prediction.ipynb

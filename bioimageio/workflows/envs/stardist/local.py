@@ -1,1 +1,1 @@
-from ._inference import run_stardist_inference_2d
+from ._inference import stardist_prediction_2d

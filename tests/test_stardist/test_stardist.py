@@ -10,7 +10,7 @@ from bioimageio.spec.shared import resolve_source
 @pytest.mark.parametrize("tiles", [None])
 @pytest.mark.asyncio
 async def test_stardist_2d(tiles):
-    from bioimageio.workflows import run_stardist_inference_2d
+    from bioimageio.workflows import stardist_prediction_2d
 
     rdf = "chatty-frog"
     model = load_resource_description("chatty-frog")
@@ -20,6 +20,6 @@ async def test_stardist_2d(tiles):
     )
 
     raw = load_image(model.test_inputs[0], model.inputs[0].axes)
-    labels, polys = await run_stardist_inference_2d(rdf, raw, tiles=tiles)
+    labels, polys = await stardist_prediction_2d(rdf, raw, tiles=tiles)
 
     assert_array_equal(labels, expected_labels)
