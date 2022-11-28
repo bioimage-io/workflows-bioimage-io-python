@@ -1,15 +1,16 @@
 import json
-from argparse import ArgumentParser
+import warnings
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from functools import partial
-from typing import Union
+from typing import Optional, Union
 
 import typer
-
 from bioimageio.core import load_resource_description
 from bioimageio.core.__main__ import app, help_version as help_version_core
 from bioimageio.core.image_helper import load_image, save_image
-from bioimageio.core.resource_io.nodes import Workflow
+from bioimageio.core.resource_io.nodes import ResourceDescription, Workflow
 from bioimageio.spec.workflow.raw_nodes import Input, Option, TYPE_NAME_TYPES
+
 from bioimageio.workflows import __version__
 from bioimageio.workflows.operators import run_workflow as run_workflow_op
 
@@ -40,38 +41,52 @@ def callback():
 
 @app.command(context_settings=dict(allow_extra_args=True, ignore_unknown_options=True), add_help_option=False)
 def run_workflow(
-    workflow_rdf: str = typer.Argument(..., help="BioImage.IO workflow RDF id/url/path."),
+    workflow_rdf: str = typer.Argument(None, help="BioImage.IO workflow RDF id/url/path."),
     *,
     output_folder: Path = Path("outputs"),
     output_tensor_extension: str = ".npy",
+    help: bool = typer.Option(False, "--help", "-h"),
     ctx: typer.Context,
 ):
-    """Run a BioImage.IO workflow. ('--help' only available with WORKFLOW_RDF specified)"""  # todo: improve --help
-    wf = load_resource_description(workflow_rdf)
-    if not isinstance(wf, Workflow):
-        type_ = wf.type if wf.type != "workflow" else type(wf)
-        raise ValueError(f"Expected workflow RDF, but got type {type_}.")
+    """Run a BioImage.IO workflow."""
+    if workflow_rdf is None:
+        wf: Optional[ResourceDescription] = None
+        wf_name = "BioImage.IO workflow"
+    else:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")  # ignore warnings for loading workflow as we do not develop the wf here.
+            wf = load_resource_description(workflow_rdf)
 
-    assert isinstance(wf, Workflow)
-    parser = ArgumentParser(description=f"CLI for {wf.name}")
+        if not isinstance(wf, Workflow):
+            type_ = wf.type if wf.type != "workflow" else type(wf)
+            raise ValueError(f"Expected workflow RDF, but got type {type_}.")
+
+        assert isinstance(wf, Workflow)
+
+        wf_name = wf.name
+
+    parser = ArgumentParser(description=f"CLI to run {wf_name}", formatter_class=ArgumentDefaultsHelpFormatter)
 
     # replicate typer args to show up in help
     parser.add_argument(
-        metavar="rdf-source",
+        metavar="workflow-rdf",
         dest="workflow_rdf",
-        help="BioImage.IO workflow RDF id/url/path. The optional arguments below are workflow specific.",
+        help="BioImage.IO workflow RDF id/url/path.",
     )
-    parser.add_argument(
-        metavar="output-folder", dest="output_folder", help="Folder to save outputs to.", default=Path("outputs")
+    group = parser.add_argument_group(
+        "general options", "options for the 'run-workflow' command, not the workflow to be run."
     )
-    parser.add_argument(
-        metavar="output-tensor-extension",
+    group.add_argument(
+        "--output-folder", dest="output_folder", help="Folder to save outputs to.", default=Path("outputs")
+    )
+    group.add_argument(
+        "--output-tensor-extension",
         dest="output_tensor_extension",
-        help="Output tensor extension.",
+        help="Determines how to save output tensors.",
         default=".npy",
     )
 
-    def add_param_args(params):
+    def add_param_args(params, group):
         for param in params:
             argument_kwargs = {}
             argument_kwargs["help"] = param.description or ""
@@ -86,16 +101,17 @@ def run_workflow(
             else:
                 argument_kwargs["type"] = TYPE_NAME_TYPES[param.type]
 
+            if hasattr(param, "default"):
+                argument_kwargs["default"] = param.default
+                argument_kwargs["metavar"] = param.name[0].capitalize()
+            else:
+                argument_kwargs["metavar"] = param.name
+
             if param.type == "list":
                 argument_kwargs["nargs"] = "*"
 
-            if hasattr(param, "default"):
-                argument_kwargs["default"] = param.default
-            else:
-                argument_kwargs["required"] = True
-
-            argument_kwargs["metavar"] = param.name[0].capitalize()
-            parser.add_argument("--" + param.name.replace("_", "-"), **argument_kwargs)
+            arg_name = ("--" if "default" in argument_kwargs else "") + param.name.replace("_", "-")
+            group.add_argument(arg_name, **argument_kwargs)
 
     def prepare_parameter(value, param: Union[Input, Option]):
         if param.type == "tensor":
@@ -103,9 +119,20 @@ def run_workflow(
         else:
             return value
 
-    add_param_args(wf.inputs)
-    add_param_args(wf.options)
-    args = parser.parse_args([workflow_rdf, str(output_folder), output_tensor_extension] + list(ctx.args))
+    if wf is not None:
+        add_param_args(wf.inputs, parser.add_argument_group(f"inputs of '{wf_name}'"))
+        add_param_args(wf.options, parser.add_argument_group(f"options of '{wf_name}'"))
+
+    given_args = ["--output-folder", str(output_folder), "--output-tensor-extension", output_tensor_extension] + list(
+        ctx.args
+    )
+    if help:
+        given_args.append("--help")
+
+    if workflow_rdf is not None:
+        given_args.insert(0, workflow_rdf)
+
+    args = parser.parse_args(given_args)
     outputs = run_workflow_op(
         workflow_rdf,
         inputs=[prepare_parameter(getattr(args, ipt.name), ipt) for ipt in wf.inputs],
