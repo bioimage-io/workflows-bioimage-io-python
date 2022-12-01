@@ -43,12 +43,13 @@ conda install -c conda-forge bioimageio.workflows
 
 ## Relevant BioImage.IO Environment Variables
 
-| Name                              | Default               | Description                                                                                                                                      | defined in           |
-|-----------------------------------|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
-| BIOIMAGEIO_USE_REMOTE_DEFAULT_ENV | "false"               | If "true" bioimageio.workflows will execute any workflow defined in the default environment remotely via the hypha server and not locally.       | bioimageio.workflows | 
-| BIOIMAGEIO_USE_CACHE              | "true"                | Enables simple URL to file cache. possible, case-insensitive, positive values are: "true", "yes", "1". Any other value is interpreted as "false" | bioimageio.spec      |
-| BIOIMAGEIO_CACHE_PATH             | generated tmp folder  | File path for simple URL to file cache; changes of URL source are not detected.                                                                  | bioimageio.spec      |
-| BIOIMAGEIO_CACHE_WARNINGS_LIMIT   | "3"                   | Maximum number of warnings generated for simple cache hits.                                                                                      | bioimageio.spec      |
+| Name                              | Default              | Description                                                                                                                                      | defined in           |
+|-----------------------------------|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
+| BIOIMAGEIO_USE_REMOTE_DEFAULT_ENV | "false"              | If "true" bioimageio.workflows will execute any workflow defined in the default environment remotely via the hypha server and not locally.       | bioimageio.workflows | 
+| BIOIMAGEIO_AUTOSTART_SERVER | "true"               | If "true" a hypha server will be launched automatically if connecting to a local server url (http://localhost:...) fails.                        | bioimageio.workflows | 
+| BIOIMAGEIO_USE_CACHE              | "true"               | Enables simple URL to file cache. possible, case-insensitive, positive values are: "true", "yes", "1". Any other value is interpreted as "false" | bioimageio.spec      |
+| BIOIMAGEIO_CACHE_PATH             | generated tmp folder | File path for simple URL to file cache; changes of URL source are not detected.                                                                  | bioimageio.spec      |
+| BIOIMAGEIO_CACHE_WARNINGS_LIMIT   | "3"                  | Maximum number of warnings generated for simple cache hits.                                                                                      | bioimageio.spec      |
 
 ## Changelog
 #### bioimageio.workflows tbd

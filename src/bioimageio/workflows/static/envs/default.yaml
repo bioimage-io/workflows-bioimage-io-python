@@ -1,0 +1,17 @@
+name: bioimageio_wf_env_default
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - bioimageio.core
+  - black
+  - dask
+  - mypy
+  - pip
+  - pytest
+  - pytest-asyncio
+  - xarray
+  - pip:
+    - hypha
+    - imjoy-rpc
+    - git+https://github.com/bioimage-io/workflows-bioimage-io.git

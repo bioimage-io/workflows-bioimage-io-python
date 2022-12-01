@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bioimageio.workflows"
+description = "BioImage.IO Workflows extending the bioimageio.core functionality."
+authors = [
+    {name = "Fynn Beuttenmueller", email = "thefynnbe@gmail.com"},
+]
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+]
+dependencies = [
+    "bioimageio.core==0.5.8.*",
+    "dask",
+    "imjoy-rpc",
+    "numpy",
+    "tqdm",
+    "typer",
+    "xarray",
+    "toml",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+test = ["pytest", "pytest-asyncio", "black", "mypy"]
+server = ["hypha"]
+dev = ["pre-commit", "docstring_parser"]
+inference = ["torch>=1.13", "torchvision", "tensorflow==2.*", "onnxruntime>=1.12"]
+stardist_tf1 = ["stardist[tf1]", "tensorflow==1.*"]
+stardist = ["stardist", "tensorflow==2.*"]
+
+[project.scripts]
+bioimageio = "bioimageio.workflows.__main__:app"
+
+[tool.black]
+line-length = 120
+target-version = ["py39"]
+
+[tool.isort]
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true

@@ -85,7 +85,11 @@ def extract_axes_from_param_descr(
     if "\n" in descr:
         descr, *axes_descr_lines = descr.split("\n")
         assert axes_descr_lines[0].strip().startswith("axes:")
-        axes_descr = "\n".join(axes_descr_lines[1:])
+        if len(axes_descr_lines) == 1:
+            axes_descr = axes_descr_lines[0][len("axes:") :]
+        else:
+            axes_descr = "\n".join(axes_descr_lines[1:])
+
         try:
             axes_data = yaml.load(axes_descr)
             axes = axes_field._deserialize(axes_data)
@@ -112,7 +116,7 @@ def extract_serialized_wf_kwargs(descr: str) -> typing.Tuple[str, typing.Dict[st
 
 
 def main(env_name):
-    dist = Path(__file__).parent / "../bioimageio/workflows/static/workflow_rdfs"
+    dist = Path(__file__).parent / "../src/bioimageio/workflows/static/workflow_rdfs"
     dist.mkdir(parents=True, exist_ok=True)
 
     local_submodule = import_module(f"bioimageio.workflows.envs.{env_name}.local")

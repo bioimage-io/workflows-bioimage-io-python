@@ -1,0 +1,13 @@
+name: bioimageio_wf_env_stardist
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - bioimageio.core
+  - dask
+  - pip
+  - pytest
+  - pytest-asyncio
+  - xarray
+  - pip:
+    - imjoy-rpc

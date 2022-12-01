@@ -51,7 +51,6 @@ test:
   commands:
     - pytest
 
-
 about:
   home: https://github.com/bioimage-io/workflows-bioimage-io-python
   license: MIT
