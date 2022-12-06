@@ -1,18 +1,16 @@
-name: bioimageio_wf_env_default
+name: bioimageio_wf_env_stardist_tf1
 channels:
   - conda-forge
   - defaults
 dependencies:
   - bioimageio.core
-  - black
   - dask
-  - mypy
   - pip
   - pytest
   - pytest-asyncio
   - xarray
-  - python >=3.7,<3.11
   - pip:
-    - hypha
     - imjoy-rpc
+    - stardist[tf1]
+    - tensorflow==1.*
     - git+https://github.com/bioimage-io/workflows-bioimage-io-python.git

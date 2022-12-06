@@ -1,1 +1,2 @@
-from ._submodule_service import RemoteSubmodule, run_submodule_services
+from ._client import RemoteSubmodule
+from ._services import register_submodule_service, register_submodule_service_launcher

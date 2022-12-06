@@ -4,10 +4,12 @@ from bioimageio.core import load_resource_description
 from bioimageio.core.image_helper import load_image
 from bioimageio.core.resource_io.nodes import Model
 from bioimageio.spec.shared import resolve_source
-from bioimageio.workflows import stardist_prediction_2d
+from bioimageio.workflows import stardist_prediction_2d, hello
 
 
 async def main():
+    print(await hello())
+
     rdf = "chatty-frog"
     model = load_resource_description("chatty-frog")
     assert isinstance(model, Model)
