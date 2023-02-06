@@ -8,6 +8,7 @@ covers: ['https://zenodo.org/record/7609747/files/dask_inference_cover.png']
 description: To run inference on arbitrary input tensors they are chunked such that
   considering halo and offset all inputs to the model have `tiles` shape.
 format_version: 0.2.3
+icon: ⚙
 id: bioimageio/inference_with_dask
 inputs:
 - {description: the (source/raw) model RDF that describes the model to be used for

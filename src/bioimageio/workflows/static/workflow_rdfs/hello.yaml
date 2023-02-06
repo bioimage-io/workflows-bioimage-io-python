@@ -2,6 +2,7 @@ cite:
 - {text: BioImage.IO, url: 'https://doi.org/10.1101/2022.06.07.495102'}
 description: This dummy workflow is intended as a demonstration and for testing.
 format_version: 0.2.3
+icon: ⚙
 id: bioimageio/hello
 inputs: []
 license: MIT

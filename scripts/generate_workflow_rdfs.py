@@ -217,6 +217,7 @@ def main(env_name):
             license="MIT",
             rdf_source=f"https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/{wf_id}.yaml",
             tags=["workflow"],
+            icon="⚙"
         )
         serialized = serialize_raw_resource_description_to_dict(wf)
         serialized.update(serialized_kwargs)
