@@ -42,7 +42,7 @@ def forward(*tensors, model_adapter: ModelAdapter, output_tile_roi: Tuple[slice,
     return output[output_tile_roi]
 
 
-async def run_model_inference_with_dask(
+async def inference_with_dask(
     model_rdf: Union[str, PathLike, dict, IO, bytes, raw_nodes.URI, RawResourceDescription],
     tensors: Sequence[xr.DataArray],
     boundary_mode: Union[
@@ -54,14 +54,20 @@ async def run_model_inference_with_dask(
     devices: Sequence[str] = ("cpu",),
     tiles: Optional[Sequence[Dict[str, int]]] = None,
 ) -> OrderedDict[str, xr.DataArray]:
-    """run model inference using chunked dask arrays for tiling
+    """Model inference with chunked dask arrays for tiling
 
-    To run inference on arbitrary input tensors, they are chunked such that with halo and offset all inputs to the
+    To run inference on arbitrary input tensors they are chunked such that considering halo and offset all inputs to the
     model have `tiles` shape.
 
     .. code-block:: yaml
-    authors: [{name: Fynn Beuttenmüller, github_user: fynnbe}]
-    cite: [{text: BioImage.IO, url: "https://doi.org/10.1101/2022.06.07.495102"}]
+    authors: [{name: Fynn Beuttenmüller, github_user: fynnbe, affiliation: EMBL Heidelberg}]
+    cite:
+    - text: BioImage.IO
+      url: "https://doi.org/10.1101/2022.06.07.495102"
+    - text: "Dask Development Team (2016). Dask: Library for dynamic task scheduling"
+      url: "https://dask.org"
+    tags: [workflow, inference, dask, tiling]
+    covers: ["https://zenodo.org/record/7609747/files/dask_inference_cover.png"]
 
     Args:
         model_rdf: the (source/raw) model RDF that describes the model to be used for inference

@@ -139,5 +139,4 @@ class RemoteSubmodule:
 
     async def _service_call(self, *args, _submodule_func_name, **kwargs):
         await self
-        print('calling ', _submodule_func_name)
         return await self.service_funcs[_submodule_func_name](*args, **kwargs)

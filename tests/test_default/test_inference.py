@@ -7,7 +7,7 @@ from bioimageio.spec.model.raw_nodes import Model as RawModel
 
 
 def test_run_model_inference_with_dask():
-    from bioimageio.workflows.envs.default import run_model_inference_with_dask
+    from bioimageio.workflows.envs.default import inference_with_dask
 
     model = load_raw_resource_description(
         "/repos/bioimage-io/spec-bioimage-io/example_specs/models/updown_test_model/rdf.yaml", update_to_format="latest"
@@ -16,7 +16,7 @@ def test_run_model_inference_with_dask():
 
     test_inputs = [load_image(p, s.axes) for p, s in zip(model.test_inputs, model.inputs)]
     expected_outputs = [load_image(p, s.axes) for p, s in zip(model.test_outputs, model.outputs)]
-    outputs = await run_model_inference_with_dask(
+    outputs = await inference_with_dask(
         model, *test_inputs, tiles=[dict(zip(ipt.axes, ipt.shape.min)) for ipt in model.inputs]
     )
     # todo: adapt for multiple outputs

@@ -1,17 +1,20 @@
 authors:
-- {github_user: fynnbe, name: Fynn Beuttenmüller}
+- {affiliation: EMBL Heidelberg, github_user: fynnbe, name: Fynn Beuttenmüller}
 cite:
 - {text: BioImage.IO, url: 'https://doi.org/10.1101/2022.06.07.495102'}
-description: 'To run inference on arbitrary input tensors, they are chunked such that
-  with halo and offset all inputs to the
-
-  model have `tiles` shape.'
+- {text: 'Dask Development Team (2016). Dask: Library for dynamic task scheduling',
+  url: 'https://dask.org'}
+covers: ['https://zenodo.org/record/7609747/files/dask_inference_cover.png']
+description: To run inference on arbitrary input tensors they are chunked such that
+  considering halo and offset all inputs to the model have `tiles` shape.
 format_version: 0.2.3
+id: bioimageio/inference_with_dask
 inputs:
 - {description: the (source/raw) model RDF that describes the model to be used for
     inference, name: model_rdf, type: string}
 - {description: model input tensors, name: tensors, type: list}
-name: run model inference using chunked dask arrays for tiling
+license: MIT
+name: Model inference with chunked dask arrays for tiling
 options:
 - {default: reflect, description: How to pad missing values., name: boundary_mode,
   type: string}
@@ -28,5 +31,7 @@ options:
     tile sizes based on the model RDF., name: tiles, type: list}
 outputs:
 - {description: named model outputs, name: outputs, type: dict}
+rdf_source: https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/inference_with_dask.yaml
+tags: [workflow, inference, dask, tiling]
 type: workflow
 version: 0.1.0

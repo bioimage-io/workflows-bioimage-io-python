@@ -63,6 +63,7 @@ class SubmoduleServiceLauncher:
     async def health_check(self):
         return f"procs: {[]}"
 
+
 async def register_submodule_service(env_name: str):
     """Start a service per environment name to a hypha server which provides the functionality of that
     environment specific workflow submodule."""
@@ -83,7 +84,7 @@ async def register_submodule_service(env_name: str):
 
     for func_name, func in getmembers(env, isfunction):
         assert func_name not in service_config
-        print("register", func_name)
+        print("registered", func_name)
         service_config[func_name] = func
 
     await server.register_service(service_config)

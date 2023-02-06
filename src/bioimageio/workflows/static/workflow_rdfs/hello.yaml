@@ -2,7 +2,9 @@ cite:
 - {text: BioImage.IO, url: 'https://doi.org/10.1101/2022.06.07.495102'}
 description: This dummy workflow is intended as a demonstration and for testing.
 format_version: 0.2.3
+id: bioimageio/hello
 inputs: []
+license: MIT
 name: dummy workflow printing msg
 options:
 - {default: Hello!, description: Message, name: msg, type: string}
@@ -18,5 +20,7 @@ options:
   type: tensor
 outputs:
 - {description: A possibly manipulated message., name: msg, type: string}
+rdf_source: https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/hello.yaml
+tags: [workflow]
 type: workflow
 version: 0.1.0

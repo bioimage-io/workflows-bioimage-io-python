@@ -112,7 +112,19 @@ def extract_serialized_wf_kwargs(descr: str) -> typing.Tuple[str, typing.Dict[st
     else:
         kwargs = {}
 
-    return descr.strip(), kwargs
+    # remove any indentation and new lines in the description, while keeping two new lines as one.
+    lines = [line.strip() for line in descr.strip().split("\n")]
+    descr = " ".join([line or "\n" for line in lines])
+
+    kwargs["tags"] = kwargs.get("tags", [])
+    if "workflow" not in kwargs["tags"]:
+        kwargs["tags"].insert(0, "workflow")
+
+    kwargs["cite"] = kwargs.get("cite", [])
+    if "BioImage.IO" not in [c["text"] for c in kwargs["cite"]]:
+        kwargs["cite"].insert(0, dict(text="BioImage.IO", url="https://doi.org/10.1101/2022.06.07.495102"))
+
+    return descr, kwargs
 
 
 def main(env_name):
@@ -201,6 +213,10 @@ def main(env_name):
             options=options,
             outputs=outputs,
             version=CURRENT_VERSION,
+            id=f"bioimageio/{wf_id}",
+            license="MIT",
+            rdf_source=f"https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/{wf_id}.yaml",
+            tags=["workflow"],
         )
         serialized = serialize_raw_resource_description_to_dict(wf)
         serialized.update(serialized_kwargs)
