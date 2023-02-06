@@ -1,8 +1,9 @@
 import tempfile
+import warnings
 from math import ceil
 from os import PathLike
 from pathlib import Path
-from typing import Dict, IO, List, Optional, Sequence, Tuple, Union
+from typing import Dict, IO, List, Optional, Tuple, Union
 
 import xarray as xr
 from stardist import import_bioimageio as stardist_import_bioimageio
@@ -12,13 +13,14 @@ from bioimageio.core.prediction_pipeline._combined_processing import CombinedPro
 from bioimageio.core.prediction_pipeline._measure_groups import compute_measures
 from bioimageio.core.resource_io.nodes import Model
 from bioimageio.spec.model import raw_nodes
+from bioimageio.spec.shared.common import AXIS_LETTER_TO_NAME, AXIS_NAME_TO_LETTER
 from bioimageio.spec.shared.raw_nodes import ResourceDescription as RawResourceDescription
 
 
 async def stardist_prediction_2d(
     model_rdf: Union[str, PathLike, dict, IO, bytes, raw_nodes.URI, RawResourceDescription],
     input_tensor: xr.DataArray,
-    tiles: Optional[Sequence[Dict[str, int]]] = None,
+    tile: Optional[Dict[str, int]] = None,
 ) -> Tuple[xr.DataArray, dict]:
     """stardist prediction 2d
 
@@ -45,7 +47,7 @@ async def stardist_prediction_2d(
               name: y
             - type: space
               name: x
-        tiles: Tile shapes for model inputs. Defaults to no tiling.
+        tile: Tile shape for model input. Defaults to no tiling. Currently ignored for preprocessing.
 
     Returns:
         labels. Labels of detected objects
@@ -58,9 +60,8 @@ async def stardist_prediction_2d(
 
         polys. Dictionary describing the labeled object's polygons
     """
-
-    # todo: use run_model_inference_with_dask for model inference and then apply stardist postprocessing.
-    # outputs = await run_model_inference_with_dask(model_rdf, input_tensor, boundary_mode=boundary_mode, enable_preprocessing=enable_preprocessing, enable_postprocessing=True, tiles=tiles)
+    # todo: use inference_with_dask for model inference and then apply stardist postprocessing.
+    # outputs = await inference_with_dask(model_rdf, input_tensor, boundary_mode=boundary_mode, enable_preprocessing=enable_preprocessing, enable_postprocessing=True, tiles=[tile])
     # assert len(outputs) == 1
     # output = outputs["output"]
 
@@ -69,7 +70,6 @@ async def stardist_prediction_2d(
         import_dir = Path(tmp_dir) / "import_dir"
         imported_stardist_model = stardist_import_bioimageio(package_path, import_dir)
 
-    # transpose tensors to match ipt spec
     model = load_resource_description(package_path)
     assert isinstance(model, Model)
     if len(model.inputs) != 1:
@@ -78,14 +78,10 @@ async def stardist_prediction_2d(
     if len(model.outputs) != 1:
         raise NotImplementedError("Multiple outputs for stardist models not yet implemented")
 
-    if tiles is None:
-        n_tiles: Optional[List[int]] = None
-    else:
-        n_tiles = []
-        for i, a in enumerate(model.inputs[0].axes):
-            t = tiles[i][a]
-            s = input_tensor.sizes[a]
-            n_tiles.append(max(ceil(s / t), 1))
+    # rename tensor axes to single letters to match model RDF
+    map_axes = {k: v for k, v in AXIS_NAME_TO_LETTER.items() if k in input_tensor.dims}
+    if map_axes:
+        input_tensor = input_tensor.rename(map_axes)
 
     prep = CombinedProcessing.from_tensor_specs(model.inputs)
     ipt_name = model.inputs[0].name
@@ -93,7 +89,24 @@ async def stardist_prediction_2d(
     computed_measures = compute_measures(prep.required_measures, sample=sample)
     prep.apply(sample, computed_measures)
 
-    img = sample[ipt_name].transpose(*model.inputs[0].axes).to_numpy()
+    preprocessed_input = sample[ipt_name]
+    map_axes_back = {k: v for k, v in AXIS_LETTER_TO_NAME.items() if k in preprocessed_input.dims}
+    if map_axes_back:
+        preprocessed_input = preprocessed_input.rename(map_axes_back)
+
+    input_axis_order = [AXIS_LETTER_TO_NAME.get(a, a) for a in model.inputs[0].axes]
+    if tile is None:
+        n_tiles: Optional[List[int]] = None
+    else:
+        n_tiles = []
+        for a in input_axis_order:
+            t = tile[a]
+            s = preprocessed_input.sizes[a]
+            n_tiles.append(max(ceil(s / t), 1))
+
+        warnings.warn(f"translated tile {tile} to n_tiles: {n_tiles} for stardist library.")
+
+    img = preprocessed_input.transpose(*input_axis_order).to_numpy()
     labels, polys = imported_stardist_model.predict_instances(
         img,
         axes="".join([{"b": "S"}.get(a[0], a[0].capitalize()) for a in model.inputs[0].axes]),
