@@ -71,6 +71,9 @@ def get_type_name(annotation):
 def parse_args():
     p = ArgumentParser(description="Generate workflow RDFs for one workflow environment submodule")
     p.add_argument("env_name", choices=[c for c in dir(bioimageio.workflows.envs) if not c.startswith("_")])
+    p.add_argument(
+        "--verify", action="store_true", help="raise error if generating would change any existing (or missing) file."
+    )
 
     return p.parse_args()
 
@@ -127,9 +130,10 @@ def extract_serialized_wf_kwargs(descr: str) -> typing.Tuple[str, typing.Dict[st
     return descr, kwargs
 
 
-def main(env_name):
+def main(env_name: str, verify: bool):
     dist = Path(__file__).parent / "../src/bioimageio/workflows/static/workflow_rdfs"
-    dist.mkdir(parents=True, exist_ok=True)
+    if not verify:
+        dist.mkdir(parents=True, exist_ok=True)
 
     local_submodule = import_module(f"bioimageio.workflows.envs.{env_name}.local")
     for wf_id in dir(local_submodule):
@@ -217,7 +221,7 @@ def main(env_name):
             license="MIT",
             rdf_source=f"https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/{wf_id}.yaml",
             tags=["workflow"],
-            icon="⚙"
+            icon="⚙",
         )
         serialized = serialize_raw_resource_description_to_dict(wf)
         serialized.update(serialized_kwargs)
@@ -228,14 +232,26 @@ def main(env_name):
         assert serialized == serialized2
 
         path = (dist / wf_id).with_suffix(".yaml").resolve()
-        with path.open("w", encoding="utf-8") as f:
-            yaml.dump(serialized, f)
+        if verify:
+            with path.open("r", encoding="utf-8") as f:
+                existing = yaml.load(f)
 
-        print(f"saved {path}")
+            if serialized != existing:
+                raise RuntimeError(f"Exising {path} differs from generated RDF.")
+        else:
+            with path.open("w", encoding="utf-8") as f:
+                yaml.dump(serialized, f)
+
+            print(f"saved {path}")
+
+        import json
+
+        with path.with_suffix(".json").open("w", encoding="utf-8") as f:
+            json.dump(serialized, f, ensure_ascii=False, indent=4, sort_keys=True)
 
     print("done")
 
 
 if __name__ == "__main__":
     args = parse_args()
-    sys.exit(main(args.env_name))
+    sys.exit(main(args.env_name, args.verify))

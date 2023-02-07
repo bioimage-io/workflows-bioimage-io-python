@@ -86,6 +86,12 @@ jobs:
     - name: pytest-with-bioimage-core-main
       shell: bash -l {0}
       run: pytest --disable-pytest-warnings
+    - name: setup for workflow RDF verification
+      shell: bash -l {0}
+      run: mamba install -c conda-forge docstring_parser
+    - name: verify generated workflow RDFs
+      shell: bash -l {0}
+      run: python scripts/generate_workflow_rdfs.py default --verify
 
   test-env-stardist:
     needs: test-with-bioimage-core-conda

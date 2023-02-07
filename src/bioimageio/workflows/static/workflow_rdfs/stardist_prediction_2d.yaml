@@ -6,10 +6,11 @@ cite:
     Polygons'}
 - {doi: 10.1109/WACV45572.2020.9093435, text: 'Stardist: Star-convex Polyhedra for
     3D Object Detection and Segmentation in Microscopy'}
-description: 'A workflow to apply a stardist model and the stardist postprocessing.
-
-  This workflow is loosely based on https://nbviewer.org/github/stardist/stardist/blob/master/examples/2D/3_prediction.ipynb'
+description: A workflow to apply a stardist model and the stardist postprocessing.
+  This workflow is loosely based on https://nbviewer.org/github/stardist/stardist/blob/master/examples/2D/3_prediction.ipynb
 format_version: 0.2.3
+icon: ⚙
+id: bioimageio/stardist_prediction_2d
 inputs:
 - {description: the (source/raw) model RDF that describes the stardist model to be
     used for inference, name: model_rdf, type: string}
@@ -21,14 +22,14 @@ inputs:
   description: raw input
   name: input_tensor
   type: tensor
-name: run stardist model inference
+license: MIT
+name: stardist prediction 2d
 options:
-- {default: null, description: Tile shapes for model inputs. Defaults to no tiling.,
-  name: tiles, type: list}
+- {default: null, description: Tile shape for model input. Defaults to no tiling.
+    Currently ignored for preprocessing., name: tile, type: dict}
 outputs:
 - axes:
   - {type: batch}
-  - {type: channel}
   - {name: y, type: space}
   - {name: x, type: space}
   description: Labels of detected objects
@@ -36,5 +37,7 @@ outputs:
   type: tensor
 - {description: Dictionary describing the labeled object's polygons, name: polys,
   type: dict}
+rdf_source: https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/stardist_prediction_2d.yaml
+tags: [workflow]
 type: workflow
 version: 0.1.0

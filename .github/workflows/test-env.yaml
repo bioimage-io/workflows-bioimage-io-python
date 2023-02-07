@@ -35,3 +35,9 @@ jobs:
     - name: pytest
       shell: bash -l {0}
       run: pytest --disable-pytest-warnings tests/test_${{ inputs.submodule_name || inputs.env_name }}
+    - name: setup for workflow RDF verification
+      shell: bash -l {0}
+      run: mamba install -c conda-forge docstring_parser
+    - name: verify generated workflow RDFs
+      shell: bash -l {0}
+      run: python scripts/generate_workflow_rdfs.py {{ inputs.env_name }} --verify
