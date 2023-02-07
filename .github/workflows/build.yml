@@ -22,23 +22,6 @@ jobs:
         with:
           tool_name: blackfmt
 
-  mypy:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install mypy
-    - name: MyPy
-      run: |
-        mkdir -p .mypy-cache
-        mypy . --install-types --non-interactive --cache-dir .mypy-cache --explicit-package-bases --check-untyped-defs
-
   test-with-bioimage-core-conda:
     runs-on: ubuntu-latest
     strategy:
@@ -88,11 +71,19 @@ jobs:
       shell: bash -l {0}
       run: pytest --disable-pytest-warnings
     - name: setup for workflow RDF verification
+      if: matrix.python-version == 3.9
       shell: bash -l {0}
       run: mamba install -c conda-forge docstring_parser
     - name: verify generated workflow RDFs
+      if: matrix.python-version == 3.9
       shell: bash -l {0}
       run: python scripts/generate_workflow_rdfs.py default --verify
+    - name: MyPy all but env submodules other than default
+      if: matrix.python-version == 3.9
+      run: |
+        mkdir -p .mypy-cache
+        mypy --install-types --non-interactive --cache-dir .mypy-cache --explicit-package-bases --check-untyped-defs --exclude src/bioimageio/envs . 
+        mypy --install-types --non-interactive --cache-dir .mypy-cache --explicit-package-bases --check-untyped-defs src/bioimageio/envs/default
 
   test-env-stardist:
     needs: test-with-bioimage-core-conda

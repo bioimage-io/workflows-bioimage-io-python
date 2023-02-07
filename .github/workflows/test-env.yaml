@@ -41,3 +41,7 @@ jobs:
     - name: verify generated workflow RDFs
       shell: bash -l {0}
       run: python scripts/generate_workflow_rdfs.py {{ inputs.env_name }} --verify
+    - name: MyPy env submodule
+      run: |
+        mkdir -p .mypy-cache
+        mypy --install-types --non-interactive --cache-dir .mypy-cache --explicit-package-bases --check-untyped-defs src/bioimageio/envs/${{ inputs.env_name }}
