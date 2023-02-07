@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from numpy.testing import assert_array_almost_equal
 
 from bioimageio.core import load_raw_resource_description
@@ -6,6 +7,7 @@ from bioimageio.core.image_helper import load_image
 from bioimageio.spec.model.raw_nodes import Model as RawModel
 
 
+@pytest.mark.asyncio
 def test_run_model_inference_with_dask():
     from bioimageio.workflows.envs.default import inference_with_dask
 
