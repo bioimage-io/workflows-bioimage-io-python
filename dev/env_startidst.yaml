@@ -9,7 +9,7 @@ dependencies:
   - dask
   - mypy
   - pip
-  - pytest
+  - pytest-asyncio
   - python==3.9.*
   - stardist
   - tensorflow==2.*

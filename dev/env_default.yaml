@@ -9,7 +9,7 @@ dependencies:
   - dask
   - mypy
   - pip
-  - pytest
+  - pytest-asyncio
   - xarray
   - pip:
     - imjoy-rpc
