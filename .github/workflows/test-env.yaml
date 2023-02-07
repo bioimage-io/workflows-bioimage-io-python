@@ -23,15 +23,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: install dependencies
-      uses: conda-incubator/setup-miniconda@v2
+    - name: Install Conda environment with Micromamba
+      uses: mamba-org/provision-with-micromamba@main
       with:
-        auto-update-conda: true
-        mamba-version: "*"
-        channel-priority: flexible
-        activate-environment: ${{ inputs.env_name }}
         environment-file: dev/env_${{ inputs.env_name }}.yaml
-        python-version: ${{ inputs.python_version }}
+        extra-specs: |
+          python=${{ matrix.python-version }}
     - name: pytest
       shell: bash -l {0}
       run: pytest --disable-pytest-warnings tests/test_${{ inputs.submodule_name || inputs.env_name }}
