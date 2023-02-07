@@ -45,7 +45,6 @@ axes_field = fields.Union(
 
 
 def get_type_name(annotation):
-
     orig = get_origin(annotation)
     if orig is list or orig is tuple or orig is collections.abc.Sequence:
         annotation = list

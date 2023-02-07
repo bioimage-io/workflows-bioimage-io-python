@@ -28,7 +28,7 @@ async def register_submodule_service_launcher():
             "run_in_executor": True,  # This will make sure all the sync functions run in a separate thread
         },
         start_submodule_service=launcher.start_submodule_service,
-        health_check=launcher.health_check
+        health_check=launcher.health_check,
     )
 
     await server.register_service(service_config)
