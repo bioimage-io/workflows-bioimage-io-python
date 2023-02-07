@@ -12,7 +12,7 @@ on:
         type: string
         required: false
         default: ''
-      python-version:
+      python_version:
         description: "python version to run test with"
         type: number
         required: true
@@ -31,7 +31,7 @@ jobs:
         channel-priority: flexible
         activate-environment: ${{ inputs.env_name }}
         environment-file: dev/env_${{ inputs.env_name }}.yaml
-        python-version: ${{ inputs.python-version }}
+        python-version: ${{ inputs.python_version }}
     - name: pytest
       shell: bash -l {0}
       run: pytest --disable-pytest-warnings tests/test_${{ inputs.submodule_name || inputs.env_name }}
