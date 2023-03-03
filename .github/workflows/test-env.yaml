@@ -26,6 +26,7 @@ jobs:
     - name: Install Conda environment with Micromamba
       uses: mamba-org/provision-with-micromamba@main
       with:
+        cache-downloads: true
         environment-file: dev/env_${{ inputs.env_name }}.yaml
         extra-specs: |
           python=${{ matrix.python-version }}
