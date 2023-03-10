@@ -1,2 +1,1 @@
-from . import default
-from . import stardist
+from . import default, stardist

@@ -10,7 +10,7 @@ from bioimageio.spec.shared.common import AXIS_LETTER_TO_NAME
 
 @pytest.mark.parametrize("tile", [None, {"batch": 1, "channel": 1, "x": 100, "y": 100}])
 @pytest.mark.asyncio
-async def test_stardist_2d(tile):
+async def test_stardist_prediction_2d(tile):
     from bioimageio.workflows import stardist_prediction_2d
 
     rdf = "chatty-frog"

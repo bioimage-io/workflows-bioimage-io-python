@@ -8,7 +8,7 @@ from bioimageio.spec.model.raw_nodes import Model as RawModel
 
 
 @pytest.mark.asyncio
-async def test_run_model_inference_with_dask():
+async def test_inference_with_dask():
     from bioimageio.workflows.envs.default import inference_with_dask
 
     model = load_raw_resource_description(
