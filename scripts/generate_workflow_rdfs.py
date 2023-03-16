@@ -7,7 +7,6 @@ import warnings
 from argparse import ArgumentParser
 from importlib import import_module
 from pathlib import Path
-from typing import Literal, get_args, get_origin
 
 import docstring_parser
 import numpy as np
@@ -29,6 +28,12 @@ from bioimageio.spec.workflow.raw_nodes import (
     Workflow as WorkflowRawNode,
 )
 from bioimageio.workflows import CURRENT_VERSION
+
+try:
+    from typing import Literal, get_args, get_origin
+except ImportError:
+    from typing_extensions import Literal, get_args, get_origin
+
 
 TYPE_NAME_MAP = {**TYPE_NAMES, **{xr.DataArray: "tensor", np.ndarray: "tensor"}}
 UNKNOWN_AXES = get_args(UnknownAxes)
