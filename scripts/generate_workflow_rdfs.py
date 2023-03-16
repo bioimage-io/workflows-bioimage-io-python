@@ -122,6 +122,9 @@ def extract_serialized_wf_kwargs(descr: str) -> typing.Tuple[str, typing.Dict[st
     if "workflow" not in kwargs["tags"]:
         kwargs["tags"].insert(0, "workflow")
 
+    if "bioimageio.workflows" not in kwargs["tags"]:
+        kwargs["tags"].insert(0, "bioimageio.workflows")
+
     kwargs["cite"] = kwargs.get("cite", [])
     if "BioImage.IO" not in [c["text"] for c in kwargs["cite"]]:
         kwargs["cite"].insert(0, dict(text="BioImage.IO", url="https://doi.org/10.1101/2022.06.07.495102"))
