@@ -38,6 +38,6 @@ outputs:
 - {description: Dictionary describing the labeled object's polygons, name: polys,
   type: dict}
 rdf_source: https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/stardist_prediction_2d.yaml
-tags: [workflow]
+tags: [bioimageio.workflows, workflow]
 type: workflow
 version: 0.1.0
