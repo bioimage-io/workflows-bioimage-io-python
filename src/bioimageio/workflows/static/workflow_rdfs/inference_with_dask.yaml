@@ -33,6 +33,6 @@ options:
 outputs:
 - {description: named model outputs, name: outputs, type: dict}
 rdf_source: https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/inference_with_dask.yaml
-tags: [workflow, inference, dask, tiling]
+tags: [bioimageio.workflows, workflow, inference, dask, tiling]
 type: workflow
 version: 0.1.0
