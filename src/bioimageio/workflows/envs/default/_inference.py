@@ -56,27 +56,27 @@ async def inference_with_dask(
 ) -> OrderedDict[str, xr.DataArray]:
     """Model inference with chunked dask arrays for tiling
 
-    To run inference on arbitrary input tensors they are chunked such that considering halo and offset all inputs to the
-    model have `tiles` shape.
+    To run inference on arbitrary input tensors they are chunked such that considering
+    halo and offset all inputs to the model have `tiles` shape.
 
     .. code-block:: yaml
-    authors: [{name: Fynn Beuttenmüller, github_user: fynnbe, affiliation: EMBL Heidelberg}]
+    authors:
+    - {name: Fynn Beuttenmüller, github_user: fynnbe, affiliation: EMBL Heidelberg}
     cite:
-    - text: BioImage.IO
-      url: "https://doi.org/10.1101/2022.06.07.495102"
+    - {text: BioImage.IO, url: "https://doi.org/10.1101/2022.06.07.495102"}
     - text: "Dask Development Team (2016). Dask: Library for dynamic task scheduling"
       url: "https://dask.org"
     tags: [workflow, inference, dask, tiling]
     covers: ["https://zenodo.org/record/7609747/files/dask_inference_cover.png"]
 
     Args:
-        model_rdf: the (source/raw) model RDF that describes the model to be used for inference
+        model_rdf: model RDF that describes the model to be used for inference
         tensors: model input tensors
         boundary_mode: How to pad missing values.
-        enable_preprocessing: If true, apply the preprocessing specified in the model RDF
-        enable_postprocessing: If true, apply the postprocessing specified in the model RDF
-        devices: devices to use for inference (device management is handled by the created model adapter)
-        tiles: Tile shapes for model inputs. Defaults to using estimated tile sizes based on the model RDF.
+        enable_preprocessing: If true, apply the preprocessing specified by the model
+        enable_postprocessing: If true, apply the postprocessing specified by the model
+        devices: devices to use by the created model adapter
+        tiles: Tile shapes for model inputs. Defaults to estimates based on the model RDF.
 
     Returns:
         outputs. named model outputs

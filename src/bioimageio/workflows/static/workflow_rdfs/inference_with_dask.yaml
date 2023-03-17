@@ -11,25 +11,24 @@ format_version: 0.2.3
 icon: ⚙
 id: bioimageio/inference_with_dask
 inputs:
-- {description: the (source/raw) model RDF that describes the model to be used for
-    inference, name: model_rdf, type: string}
+- {description: model RDF that describes the model to be used for inference, name: model_rdf,
+  type: string}
 - {description: model input tensors, name: tensors, type: list}
 license: MIT
 name: Model inference with chunked dask arrays for tiling
 options:
 - {default: reflect, description: How to pad missing values., name: boundary_mode,
   type: string}
-- {default: true, description: 'If true, apply the preprocessing specified in the
-    model RDF', name: enable_preprocessing, type: boolean}
-- {default: true, description: 'If true, apply the postprocessing specified in the
-    model RDF', name: enable_postprocessing, type: boolean}
+- {default: true, description: 'If true, apply the preprocessing specified by the
+    model', name: enable_preprocessing, type: boolean}
+- {default: true, description: 'If true, apply the postprocessing specified by the
+    model', name: enable_postprocessing, type: boolean}
 - default: [cpu]
-  description: devices to use for inference (device management is handled by the created
-    model adapter)
+  description: devices to use by the created model adapter
   name: devices
   type: list
-- {default: null, description: Tile shapes for model inputs. Defaults to using estimated
-    tile sizes based on the model RDF., name: tiles, type: list}
+- {default: null, description: Tile shapes for model inputs. Defaults to estimates
+    based on the model RDF., name: tiles, type: list}
 outputs:
 - {description: named model outputs, name: outputs, type: dict}
 rdf_source: https://raw.githubusercontent.com/bioimage-io/workflows-bioimage-io-python/main/src/bioimageio/workflows/static/workflow_rdfs/inference_with_dask.yaml
