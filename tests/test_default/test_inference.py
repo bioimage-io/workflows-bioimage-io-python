@@ -12,7 +12,8 @@ async def test_inference_with_dask():
     from bioimageio.workflows.envs.default import inference_with_dask
 
     model = load_raw_resource_description(
-        "/repos/bioimage-io/spec-bioimage-io/example_specs/models/updown_test_model/rdf.yaml", update_to_format="latest"
+        "https://raw.githubusercontent.com/bioimage-io/spec-bioimage-io/main/example_specs/models/upsample_test_model/rdf.yaml",
+        update_to_format="latest",
     )
     assert isinstance(model, RawModel)
 
